@@ -20,6 +20,9 @@ pub fn ratio_of_words_in_the_bible(input: &str) -> f64 {
     if words.is_empty() {
         return 1.0; //technically all of the input words are in the bible
     }
-    let words_in_the_bible = words.iter().filter(|&&word| bible.contains(word)).count();
+    let words_in_the_bible = words
+        .iter()
+        .filter(|&word| bible.contains(&word.to_lowercase()))
+        .count();
     words_in_the_bible as f64 / words.len() as f64
 }
