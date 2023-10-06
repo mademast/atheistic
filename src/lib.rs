@@ -17,6 +17,9 @@ pub fn ratio_of_words_in_the_bible(input: &str) -> f64 {
             .collect::<HashSet<_>>()
     });
     let words = input.unicode_words().collect::<Vec<_>>();
+    if words.is_empty() {
+        return 1.0; //technically all of the input words are in the bible
+    }
     let words_in_the_bible = words.iter().filter(|&&word| bible.contains(word)).count();
-    words.len() as f64 / words_in_the_bible as f64
+    words_in_the_bible as f64 / words.len() as f64
 }
