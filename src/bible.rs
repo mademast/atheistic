@@ -1,10 +1,10 @@
-const FULL_TEXT: &'static str = include_str!("../bible.txt");
+const FULL_TEXT: &str = include_str!("../bible.txt");
 // A state change denotes the break between books or the index from the first editions
-const STATE_CHANGE: &'static str = "\r\n\r\n\r\n\r\n\r\n";
-// The delimeter between editions (Old Testament/New Testament)
-const TESTAMENT_DELIMITER: &'static str = "***\r\n";
+const STATE_CHANGE: &str = "\r\n\r\n\r\n\r\n\r\n";
+// The delimiter between editions (Old Testament/New Testament)
+const TESTAMENT_DELIMITER: &str = "***\r\n";
 // The title delimiter breaks the book title from the verses.
-const BOOK_TITLE_DELIMITER: &'static str = "\r\n\r\n\r\n";
+const BOOK_TITLE_DELIMITER: &str = "\r\n\r\n\r\n";
 
 // Parse the bible into the Old and New Testament
 pub fn parse() -> Result<Bible, BiblicalError> {
@@ -75,9 +75,9 @@ pub struct Verse {
 }
 
 fn verse_number(raw: &str) -> Option<(usize, usize)> {
-    match raw.find(" ") {
+    match raw.find(' ') {
         None => None,
-        Some(idx) => match &raw[..idx].split_once(":") {
+        Some(idx) => match &raw[..idx].split_once(':') {
             None => None,
             Some((chapter, verse)) => {
                 let chapter: usize = chapter.trim().parse().unwrap();

@@ -81,8 +81,7 @@ pub fn where_in_the_bible(input: &str) -> Option<WhereWasWord> {
 
     let (word, first) = match matching
         .first()
-        .map(|(word, places)| places.first().map(|wm| (*word, wm)))
-        .flatten()
+        .and_then(|(word, places)| places.first().map(|wm| (*word, wm)))
     {
         None => return None,
         Some(place) => place,
