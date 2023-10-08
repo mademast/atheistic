@@ -126,6 +126,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "confindent"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c5a06ecfd8e0b653f5b0a1b083f74a275d2aab7834b90bce8c66f3c0b2f53fb1"
+
+[[package]]
 name = "core-foundation"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -538,6 +544,7 @@ dependencies = [
 name = "none_of_those_words_are_in_the_bible"
 version = "0.1.0"
 dependencies = [
+ "confindent",
  "serenity",
  "tokio",
  "unicode-segmentation",

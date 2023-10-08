@@ -1,6 +1,8 @@
 use std::env;
 
-use none_of_those_words_are_in_the_bible::are_any_of_these_words_in_the_bible;
+use none_of_those_words_are_in_the_bible::{
+    are_any_of_these_words_in_the_bible, where_in_the_bible,
+};
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
@@ -11,16 +13,26 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        println!("message received: {}", msg.content);
-        if msg.content == "!ping" {
+        let content = msg.content.to_lowercase();
+        println!("message received: {}", content);
+        if content == "!ping" {
             let res = msg.channel_id.say(&ctx.http, "Pong!").await;
             if let Err(why) = res {
                 println!("Error sending message: {:?}", why);
             }
-        } else if !are_any_of_these_words_in_the_bible(&msg.content) {
+        } else if !are_any_of_these_words_in_the_bible(&msg.content, 4) {
             let res = msg
                 .channel_id
                 .say(&ctx.http, "none of those words are in the bible")
+                .await;
+            if let Err(why) = res {
+                println!("Error sending message: {:?}", why);
+            }
+        } else if let Some(pattern) = content.strip_prefix("!where ") {
+            let wh = where_in_the_bible(pattern);
+            let res = msg
+                .channel_id
+                .say(&ctx.http, wh.unwrap_or("Couldn't find that in the bible!"))
                 .await;
             if let Err(why) = res {
                 println!("Error sending message: {:?}", why);
