@@ -51,7 +51,13 @@ impl EventHandler for Handler {
 async fn main() {
     let (old, new) = bible::parse().unwrap();
 
+    println!("OLD OLD OLD OLD");
     for (idx, book) in old.books.iter().enumerate() {
+        println!("[{idx}] {}", book.title);
+    }
+
+    println!("NEW NEW NEW NEW");
+    for (idx, book) in new.books.iter().enumerate() {
         println!("[{idx}] {}", book.title);
     }
 
