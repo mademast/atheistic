@@ -1,7 +1,8 @@
 use std::env;
 
 use none_of_those_words_are_in_the_bible::{
-    are_any_of_these_words_in_the_bible, bible, where_in_the_bible,
+    are_any_of_these_words_in_the_bible, what_words_are_in_the_bible, where_in_the_bible,
+    WhereWasWord,
 };
 use serenity::async_trait;
 use serenity::model::channel::Message;
@@ -28,11 +29,29 @@ impl EventHandler for Handler {
                 println!("Error sending message: {:?}", why);
             }
         } else if let Some(pattern) = content.strip_prefix("!where ") {
-            let wh = where_in_the_bible(pattern);
-            let res = msg
-                .reply(&ctx.http, wh.unwrap_or("Couldn't find that in the bible!"))
-                .await;
-            if let Err(why) = res {
+            let wh = match where_in_the_bible(pattern) {
+                None => String::from("Couldn't find that in the bible!"),
+                Some(WhereWasWord { book, section, .. }) => {
+                    format!("book: **{book}**\n{section}")
+                }
+            };
+
+            if let Err(why) = msg.reply(&ctx.http, wh).await {
+                println!("Error sending message: {:?}", why);
+            }
+        } else if let Some(pattern) = content.strip_prefix("!which ") {
+            let words = what_words_are_in_the_bible(pattern);
+
+            let res = if words.len() > 0 {
+                msg.reply(&ctx.http, words.join(", "))
+            } else {
+                msg.reply(
+                    &ctx.http,
+                    String::from("none of these words are in the bible"),
+                )
+            };
+
+            if let Err(why) = res.await {
                 println!("Error sending message: {:?}", why);
             }
         }

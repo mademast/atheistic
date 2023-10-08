@@ -43,30 +43,77 @@ pub fn ratio_of_words_in_the_bible(input: &str, threshold: usize) -> f64 {
     words_in_the_bible as f64 / words.len() as f64
 }
 
-pub fn where_in_the_bible(pattern: &str) -> Option<&'static str> {
-    todo!(); /*
-             let threshold = 80 * 5;
-             let bible = get_lowercase_bible();
-             let index = bible.find(pattern)?;
-             let mut min_index = index;
-             let mut max_index = index;
+fn matching_words(words: &[String]) -> Vec<(&String, &'static Vec<WordMap>)> {
+    let bible = get_bible_map();
+    words
+        .iter()
+        .filter_map(|word| bible.get(word).map(|wm| (word, wm)))
+        .collect()
+}
 
-             while min_index > 0 && min_index > index - threshold {
-                 if bible[min_index..=index].contains("\r\n\r\n") {
-                     break;
-                 } else {
-                     min_index -= 1;
-                 }
-             }
-             while max_index < bible.len() && max_index < index + threshold {
-                 if bible[index..=max_index].contains("\r\n\r\n") {
-                     break;
-                 } else {
-                     max_index += 1;
-                 }
-             }
+pub fn what_words_are_in_the_bible(input: &str) -> Vec<String> {
+    let words = input
+        .unicode_words()
+        .map(|word| word.to_lowercase())
+        .filter(|word| !IGNORE_LIST.contains(&word.as_str()))
+        .collect::<Vec<_>>();
+    let matching = matching_words(&words);
 
-             Some(&bible[min_index..=max_index])*/
+    matching
+        .into_iter()
+        .map(|(word, _)| word.to_owned())
+        .collect()
+}
+
+pub struct WhereWasWord {
+    pub testament: &'static str,
+    pub book: &'static str,
+    pub section: String,
+}
+
+pub fn where_in_the_bible(input: &str) -> Option<WhereWasWord> {
+    let words = input
+        .unicode_words()
+        .map(|word| word.to_lowercase())
+        .filter(|word| !IGNORE_LIST.contains(&word.as_str()))
+        .collect::<Vec<_>>();
+    let matching = matching_words(&words);
+
+    let (word, first) = match matching
+        .first()
+        .map(|(word, places)| places.first().map(|wm| (*word, wm)))
+        .flatten()
+    {
+        None => return None,
+        Some(place) => place,
+    };
+
+    let threshold = 80 * 5;
+    let bible = first.book.verses.to_lowercase();
+    let index = bible.find(word.as_str())?;
+    let mut min_index = index;
+    let mut max_index = index;
+
+    while min_index > 0 && min_index > index - threshold {
+        if bible[min_index..=index].contains("\r\n\r\n") {
+            break;
+        } else {
+            min_index -= 1;
+        }
+    }
+    while max_index < bible.len() && max_index < index + threshold {
+        if bible[index..=max_index].contains("\r\n\r\n") {
+            break;
+        } else {
+            max_index += 1;
+        }
+    }
+
+    Some(WhereWasWord {
+        testament: first.testament.title,
+        book: first.book.title,
+        section: bible[min_index..=max_index].to_string(),
+    })
 }
 
 pub fn get_bible() -> &'static Bible {
