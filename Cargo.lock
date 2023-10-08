@@ -546,6 +546,7 @@ version = "0.1.0"
 dependencies = [
  "confindent",
  "serenity",
+ "thiserror",
  "tokio",
  "unicode-segmentation",
 ]

@@ -19,11 +19,14 @@ pub fn ratio_of_words_in_the_bible(input: &str, threshold: usize) -> f64 {
         .map(|word| word.to_lowercase())
         .filter(|word| !IGNORE_LIST.contains(&word.as_str()))
         .collect::<Vec<_>>();
+
     if words.len() < threshold {
         return 1.0; //technically all of the input words are in the bible
     }
+
     let bible = get_bible();
     let words_in_the_bible = words.iter().filter(|&word| bible.contains(word)).count();
+
     words_in_the_bible as f64 / words.len() as f64
 }
 

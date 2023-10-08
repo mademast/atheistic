@@ -8,6 +8,8 @@ use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 
+mod bible;
+
 struct Handler;
 
 #[async_trait]
@@ -47,6 +49,14 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
+    let (old, new) = bible::parse().unwrap();
+
+    for (idx, book) in old.books.iter().enumerate() {
+        println!("[{idx}] {}", book.title);
+    }
+
+    return;
+
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
