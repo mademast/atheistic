@@ -42,7 +42,7 @@ impl EventHandler for Handler {
         } else if let Some(pattern) = content.strip_prefix("!which ") {
             let words = what_words_are_in_the_bible(pattern);
 
-            let res = if words.len() > 0 {
+            let res = if !words.is_empty() {
                 msg.reply(&ctx.http, words.join(", "))
             } else {
                 msg.reply(
