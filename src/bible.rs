@@ -36,7 +36,10 @@ impl<'t> Testament<'t> {
     fn parse(raw: &'t str) -> Result<Self, BiblicalError> {
         let mut splits = raw.split(STATE_CHANGE);
         // well the first one is the title.
-        let title = splits.next().ok_or(BiblicalError::TestamentMissingTitle)?;
+        let title = splits
+            .next()
+            .ok_or(BiblicalError::TestamentMissingTitle)?
+            .trim();
 
         let mut books = vec![];
         for book in splits {
@@ -58,7 +61,7 @@ impl<'b> Book<'b> {
         match raw.split_once(BOOK_TITLE_DELIMITER) {
             None => Err(BiblicalError::BookMissingTitle),
             Some((title, content)) => Ok(Book {
-                title,
+                title: title.trim(),
                 verses: content,
             }),
         }

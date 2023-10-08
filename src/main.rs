@@ -32,7 +32,7 @@ impl EventHandler for Handler {
             let wh = match where_in_the_bible(pattern) {
                 None => String::from("Couldn't find that in the bible!"),
                 Some(WhereWasWord { book, section, .. }) => {
-                    format!("book: **{book}**\n{section}")
+                    format!("book: **{book}**\n{}", section.trim())
                 }
             };
 
