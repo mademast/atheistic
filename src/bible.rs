@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 const FULL_TEXT: &'static str = include_str!("../bible.txt");
 // A state change denotes the break between books or the index from the first editions
 const STATE_CHANGE: &'static str = "\r\n\r\n\r\n\r\n\r\n";
@@ -9,7 +7,7 @@ const TESTAMENT_DELIMITER: &'static str = "***\r\n";
 const BOOK_TITLE_DELIMITER: &'static str = "\r\n\r\n\r\n";
 
 // Parse the bible into the Old and New Testament
-pub fn parse() -> Result<(Testament<'static>, Testament<'static>), BiblicalError> {
+pub fn parse() -> Result<Bible, BiblicalError> {
     let (_raw_index, bible_text) = FULL_TEXT
         .split_once(STATE_CHANGE)
         .ok_or(BiblicalError::MissingIndex)?;
@@ -18,7 +16,15 @@ pub fn parse() -> Result<(Testament<'static>, Testament<'static>), BiblicalError
         .split_once(TESTAMENT_DELIMITER)
         .ok_or(BiblicalError::MissingTestamentDelimiter)?;
 
-    Ok((Testament::parse(old)?, Testament::parse(new)?))
+    Ok(Bible {
+        old: Testament::parse(old)?,
+        new: Testament::parse(new)?,
+    })
+}
+
+pub struct Bible {
+    pub old: Testament<'static>,
+    pub new: Testament<'static>,
 }
 
 pub struct Testament<'t> {

@@ -1,14 +1,12 @@
 use std::env;
 
 use none_of_those_words_are_in_the_bible::{
-    are_any_of_these_words_in_the_bible, where_in_the_bible,
+    are_any_of_these_words_in_the_bible, bible, where_in_the_bible,
 };
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
-
-mod bible;
 
 struct Handler;
 
@@ -49,20 +47,6 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    let (old, new) = bible::parse().unwrap();
-
-    println!("OLD OLD OLD OLD");
-    for (idx, book) in old.books.iter().enumerate() {
-        println!("[{idx}] {}", book.title);
-    }
-
-    println!("NEW NEW NEW NEW");
-    for (idx, book) in new.books.iter().enumerate() {
-        println!("[{idx}] {}", book.title);
-    }
-
-    return;
-
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
