@@ -2,6 +2,7 @@ use std::sync::OnceLock;
 
 use ahash::{AHashMap, AHashSet};
 use bible::{Bible, Book, Testament};
+use lazy_regex::regex;
 use unicode_segmentation::UnicodeSegmentation;
 
 pub mod bible;
@@ -24,11 +25,7 @@ pub fn are_any_of_these_words_in_the_bible(input: &str, threshold: usize) -> boo
 }
 
 pub fn ratio_of_words_in_the_bible(input: &str, threshold: usize) -> f64 {
-    let words = input
-        .unicode_words()
-        .map(|word| word.to_lowercase())
-        .filter(|word| !IGNORE_LIST.contains(&word.as_str()))
-        .collect::<Vec<_>>();
+    let words = process_input(input);
 
     if words.len() < threshold {
         return 1.0; //technically all of the input words are in the bible
@@ -41,6 +38,17 @@ pub fn ratio_of_words_in_the_bible(input: &str, threshold: usize) -> f64 {
         .count();
 
     words_in_the_bible as f64 / words.len() as f64
+}
+
+fn process_input(input: &str) -> Vec<String> {
+    let regex = regex!(r"^(https?://)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$");
+    regex
+        .replace_all(input, " ")
+        .to_lowercase()
+        .unicode_words()
+        .filter(|word| !IGNORE_LIST.contains(word))
+        .map(|word| word.into())
+        .collect::<Vec<String>>()
 }
 
 fn matching_words(words: &[String]) -> Vec<(&String, &'static Vec<WordMap>)> {
