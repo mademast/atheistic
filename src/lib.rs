@@ -40,7 +40,7 @@ pub fn ratio_of_words_in_the_bible(input: &str, threshold: usize) -> f64 {
     words_in_the_bible as f64 / words.len() as f64
 }
 
-fn process_input(input: &str) -> Vec<String> {
+fn process_input(input: &str) -> AHashSet<String> {
     let regex = regex!(r"^(https?://)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$");
     regex
         .replace_all(input, " ")
@@ -48,7 +48,7 @@ fn process_input(input: &str) -> Vec<String> {
         .unicode_words()
         .filter(|word| !IGNORE_LIST.contains(word))
         .map(|word| word.into())
-        .collect::<Vec<String>>()
+        .collect::<AHashSet<String>>()
 }
 
 fn matching_words(words: &[String]) -> Vec<(&String, &'static Vec<WordMap>)> {
