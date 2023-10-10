@@ -41,7 +41,7 @@ pub fn ratio_of_words_in_the_bible(input: &str, threshold: usize) -> f64 {
 }
 
 fn process_input(input: &str) -> AHashSet<String> {
-    let regex = regex!(r"^(https?://)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$");
+    let regex = regex!(r"(https?://)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)*\/?");
     regex
         .replace_all(input, " ")
         .to_lowercase()
