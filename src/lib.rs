@@ -125,13 +125,6 @@ pub fn where_in_the_bible(input: &str) -> Option<WhereWasWord> {
 
 pub fn get_bible() -> &'static Bible {
     BIBLE.get_or_init(|| bible::parse().unwrap())
-
-    /*BIBLE.get_or_init(|| {
-        get_lowercase_bible()
-            .unicode_words()
-            .map(|str| str.to_string())
-            .collect::<AHashSet<_>>()
-    })*/
 }
 
 pub fn get_bible_map() -> &'static AHashMap<String, Vec<WordMap>> {
