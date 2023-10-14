@@ -16,9 +16,13 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         let content = msg.content.to_lowercase();
         println!("message received: {}", content);
-        if content == "!ping" {
+        if content.trim() == "!ping" {
             let res = msg.reply(&ctx.http, "Pong!").await;
             if let Err(why) = res {
+                println!("Error sending message: {:?}", why);
+            }
+        } else if content.trim() == "!meow" {
+            if let Err(why) = msg.reply(&ctx.http, "meow :3").await {
                 println!("Error sending message: {:?}", why);
             }
         } else if !are_any_of_these_words_in_the_bible(&msg.content, 4) {
