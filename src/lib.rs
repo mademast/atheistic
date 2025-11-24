@@ -5,12 +5,15 @@ use bible::{Bible, Book, Testament};
 use lazy_regex::regex;
 use unicode_segmentation::UnicodeSegmentation;
 
+use crate::bible::Verse;
+
 pub mod bible;
 
 #[derive(Copy, Clone)]
 pub struct WordMap {
     testament: &'static Testament<'static>,
     book: &'static Book<'static>,
+    verse: &'static Verse<'static>,
 }
 
 static BIBLE: OnceLock<Bible> = OnceLock::new();
@@ -76,7 +79,7 @@ pub fn what_words_are_in_the_bible(input: &str) -> Vec<String> {
 pub struct WhereWasWord {
     pub testament: &'static str,
     pub book: &'static str,
-    pub section: String,
+    pub verse: &'static Verse<'static>,
 }
 
 pub fn where_in_the_bible(input: &str) -> Option<WhereWasWord> {
@@ -87,6 +90,7 @@ pub fn where_in_the_bible(input: &str) -> Option<WhereWasWord> {
         .collect::<Vec<_>>();
     let matching = matching_words(&words);
 
+    // We only show the !where for the first match, I guess
     let (word, first) = match matching
         .first()
         .and_then(|(word, places)| places.first().map(|wm| (*word, wm)))
@@ -95,31 +99,10 @@ pub fn where_in_the_bible(input: &str) -> Option<WhereWasWord> {
         Some(place) => place,
     };
 
-    let threshold = 80 * 5;
-    let bible = first.book.verses.to_lowercase();
-    let index = bible.find(word.as_str())?;
-    let mut min_index = index;
-    let mut max_index = index;
-
-    while min_index > 0 && min_index > index - threshold {
-        if bible[min_index..=index].contains("\r\n\r\n") {
-            break;
-        } else {
-            min_index -= 1;
-        }
-    }
-    while max_index < bible.len() && max_index < index + threshold {
-        if bible[index..=max_index].contains("\r\n\r\n") {
-            break;
-        } else {
-            max_index += 1;
-        }
-    }
-
     Some(WhereWasWord {
         testament: first.testament.title,
         book: first.book.title,
-        section: bible[min_index..=max_index].to_string(),
+        verse: first.verse,
     })
 }
 
@@ -141,19 +124,25 @@ pub fn get_bible_map() -> &'static AHashMap<String, Vec<WordMap>> {
             .chain(bible.new.books.iter().map(|book| (&bible.new, book)));
 
         for (testament, book) in books {
-            let set = book
-                .verses
-                .to_lowercase()
-                .unicode_words()
-                .map(<_>::to_owned)
-                .collect::<AHashSet<_>>();
+            for verse in &book.verses {
+                let set = verse
+                    .content
+                    .to_lowercase()
+                    .unicode_words()
+                    .map(<_>::to_owned)
+                    .collect::<AHashSet<_>>();
 
-            for k in set {
-                let wordmap = WordMap { testament, book };
+                for k in set {
+                    let wordmap = WordMap {
+                        testament,
+                        book,
+                        verse,
+                    };
 
-                map.entry(k)
-                    .and_modify(|vec| vec.push(wordmap))
-                    .or_insert(vec![wordmap]);
+                    map.entry(k)
+                        .and_modify(|vec| vec.push(wordmap))
+                        .or_insert(vec![wordmap]);
+                }
             }
         }
 

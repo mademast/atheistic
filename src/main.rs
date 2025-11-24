@@ -15,7 +15,7 @@ struct Handler;
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         let content = msg.content.to_lowercase();
-        println!("message received: {}", content);
+
         if content.trim() == "!ping" {
             let res = msg.reply(&ctx.http, "Pong!").await;
             if let Err(why) = res {
@@ -35,8 +35,13 @@ impl EventHandler for Handler {
         } else if let Some(pattern) = content.strip_prefix("!where ") {
             let wh = match where_in_the_bible(pattern) {
                 None => String::from("Couldn't find that in the bible!"),
-                Some(WhereWasWord { book, section, .. }) => {
-                    format!("book: **{book}**\n{}", section.trim())
+                Some(WhereWasWord { book, verse, .. }) => {
+                    format!(
+                        "__{book} {}:{}__\n{}",
+                        verse.chapter,
+                        verse.verse,
+                        verse.content.trim()
+                    )
                 }
             };
 

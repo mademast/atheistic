@@ -38,11 +38,17 @@ by a blank line. Most verses start at the beginning of a text block
 and are fully contained, but! It seems that this is not consistent.
 
 They might:
-- Start the text block and extend the entire block.
-- Start the text block, but another verse *(or more!)* start within
+1. Start the text block and extend the entire block.
+2. Start the text block, but another verse *(or more!)* start within
 the same block.[^1]
-- Start the text block, but extend into another text block.
+3. Start the text block, but extend into another text block.
 
 [^1]: I am not well bible-studied enough to know if this is
 the same verse containing the other, or if the verse starts when the
 next begins.
+
+#### examples of the 2nd condition
+
+- The First Book of Moses: Called Genesis 2:4 and 2:5 (start line 191 in bible.txt)
+- The First Book of Moses: Called Genesis 2:11 and 2:12 (line 215)
+- The First Book of Moses: Called Genesis 3.1, 3.2, 3.3 (line 259)
