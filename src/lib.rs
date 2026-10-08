@@ -2,7 +2,7 @@ use std::sync::OnceLock;
 
 use ahash::{AHashMap, AHashSet};
 use bible::{Bible, Book, Testament};
-use lazy_regex::regex;
+use regex::regex;
 use unicode_segmentation::UnicodeSegmentation;
 
 pub mod bible;
