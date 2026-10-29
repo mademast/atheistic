@@ -1,8 +1,8 @@
 use std::env;
 
-use none_of_those_words_are_in_the_bible::{
-    are_any_of_these_words_in_the_bible, what_words_are_in_the_bible, where_in_the_bible,
-    WhereWasWord,
+use none_of_these_words_are_in_the_bible::{
+    WhereWasWord, are_any_of_these_words_in_the_bible, what_words_are_in_the_bible,
+    where_in_the_bible,
 };
 use serenity::async_trait;
 use serenity::model::channel::Message;

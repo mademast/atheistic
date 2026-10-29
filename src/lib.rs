@@ -2,7 +2,7 @@ use std::sync::OnceLock;
 
 use ahash::{AHashMap, AHashSet};
 use bible::{Bible, Book, Testament};
-use lazy_regex::regex;
+use regex::regex;
 use unicode_segmentation::UnicodeSegmentation;
 
 pub mod bible;
@@ -87,13 +87,9 @@ pub fn where_in_the_bible(input: &str) -> Option<WhereWasWord> {
         .collect::<Vec<_>>();
     let matching = matching_words(&words);
 
-    let (word, first) = match matching
+    let (word, first) = matching
         .first()
-        .and_then(|(word, places)| places.first().map(|wm| (*word, wm)))
-    {
-        None => return None,
-        Some(place) => place,
-    };
+        .and_then(|(word, places)| places.first().map(|wm| (*word, wm)))?;
 
     let threshold = 80 * 5;
     let bible = first.book.verses.to_lowercase();
