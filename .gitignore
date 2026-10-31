@@ -1,1 +1,4 @@
 /target
+
+# don't check in compressed bible, lol
+bible.lzma
