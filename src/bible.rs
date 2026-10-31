@@ -1,4 +1,10 @@
-const FULL_TEXT: &str = include_str!("../bible.txt");
+use std::{io::Read, sync::OnceLock};
+
+use lzma_rust2::Lzma2Reader;
+
+const COMPRESSED_WORD_OF_GOD: &[u8] = include_bytes!("../bible.lzma");
+static DECOMPRESSED_WORD_OF_GOD: OnceLock<String> = OnceLock::new();
+
 // A state change denotes the break between books or the index from the first editions
 const STATE_CHANGE: &str = "\r\n\r\n\r\n\r\n\r\n";
 // The delimiter between editions (Old Testament/New Testament)
@@ -6,9 +12,22 @@ const TESTAMENT_DELIMITER: &str = "***\r\n";
 // The title delimiter breaks the book title from the verses.
 const BOOK_TITLE_DELIMITER: &str = "\r\n\r\n\r\n";
 
+fn decompress_gods_word() -> &'static str {
+    DECOMPRESSED_WORD_OF_GOD.get_or_init(|| {
+        // wc -c bible.txt
+        let mut decompressed = Vec::with_capacity(4432182);
+
+        Lzma2Reader::new(COMPRESSED_WORD_OF_GOD, Default::default(), None)
+            .read_to_end(&mut decompressed)
+            .expect("bible failed to decompress");
+
+        String::from_utf8(decompressed).expect("bible did not decompress into a utf-8 string")
+    })
+}
+
 // Parse the bible into the Old and New Testament
 pub fn parse() -> Result<Bible, BiblicalError> {
-    let (_raw_index, bible_text) = FULL_TEXT
+    let (_raw_index, bible_text) = decompress_gods_word()
         .split_once(STATE_CHANGE)
         .ok_or(BiblicalError::MissingIndex)?;
 
