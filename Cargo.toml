@@ -19,3 +19,10 @@ serenity = { version = "0.12.4", default-features = false, features = [
 thiserror = "2"
 tokio = { version = "1.32", features = ["full"] }
 unicode-segmentation = "1.10"
+
+[profile.release]
+# 19808520 target/release/none_of_these_words_are_in_the_bible
+strip = true # 15722480 target/release/none_of_these_words_are_in_the_bible
+opt-level = "z" # 14363824 target/release/none_of_these_words_are_in_the_bible
+lto = true # 10149520 target/release/none_of_these_words_are_in_the_bible
+codegen-units = 1 # 9666256 target/release/none_of_these_words_are_in_the_bible
